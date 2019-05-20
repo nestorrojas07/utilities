@@ -1,0 +1,36 @@
+A continuación doy una solución rápida al problema Access-Control-Allow-Origin - CORS en Laravel 5 
+que sucede por razones de seguridad, los exploradores restringen las solicitudes HTTP de origen cruzado
+ iniciadas dentro de un script.
+
+//Creamos un middleware
+$ php artisan make:middleware Cors
+ accedemos al middleware [app/Http/Middleware/Cors.php]
+
+    return $next($request)
+        ->header('Access-Control-Allow-Origin', '*')
+        ->header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+
+
+//registramos el moddleware en el Kernel [app/Http/Kernel.php]
+
+    protected $routeMiddleware = [
+        ...
+        'cors' => \App\Http\Middleware\Cors::class,
+        ...
+    ]
+
+    protected $middlewareGroups = [
+        ...
+        'api' => [
+             ...
+             'cors',
+             ...
+        ]
+        ...
+    ]
+
+// si se desea usar directamente en el Route [/routes/api.php]
+//Agregamos a las rutas
+Route::group(['middleware' => 'cors'], function(){
+    //aqui van todas las rutas que necesitan CORS
+});
